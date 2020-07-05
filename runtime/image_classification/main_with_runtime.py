@@ -135,8 +135,8 @@ def main():
         input_size = [args.batch_size, 3, 299, 299]
     else:
         input_size = [args.batch_size, 3, 224, 224]
-    training_tensor_shapes = {"input0": input_size, "target": [args.batch_size]}
-    dtypes = {"input0": torch.int64, "target": torch.int64}
+    training_tensor_shapes = {"input": input_size, "target": [args.batch_size]}
+    dtypes = {"input": torch.int64, "target": torch.int64}
     inputs_module_destinations = {"input": 0}
     target_tensor_names = {"target"}
     for (stage, inputs, outputs) in model[:-1]:  # Skip last layer (loss).
@@ -234,8 +234,9 @@ def main():
     cudnn.benchmark = True
 
     # Data loading code
-    traindir = os.path.join(args.data_dir, 'train')
-    valdir = os.path.join(args.data_dir, 'val')
+    if args.data_dir:
+        traindir = os.path.join(args.data_dir, 'train')
+        valdir = os.path.join(args.data_dir, 'val')
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 
@@ -251,23 +252,29 @@ def main():
         if args.synthetic_data:
             train_dataset = SyntheticDataset((3, 299, 299), len(train_dataset))
     else:
-        train_dataset = datasets.ImageFolder(
-            traindir,
-            transforms.Compose([
-                transforms.RandomResizedCrop(224),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                normalize,
-            ]))
+        train_dataset = None
+        if args.data_dir:
+            train_dataset = datasets.ImageFolder(
+                traindir,
+                transforms.Compose([
+                    transforms.RandomResizedCrop(224),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.ToTensor(),
+                    normalize,
+                ]))
         if args.synthetic_data:
-            train_dataset = SyntheticDataset((3, 224, 224), len(train_dataset))
+            train_dataset = SyntheticDataset((3, 224, 224), 1000)
 
-    val_dataset = datasets.ImageFolder(valdir, transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        normalize,
-    ]))
+    
+    if args.data_dir:
+        val_dataset = datasets.ImageFolder(valdir, transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize,
+        ]))
+    else:
+        train_dataset = SyntheticDataset((3, 224, 224), 100)
 
     distributed_sampler = False
     train_sampler = None
