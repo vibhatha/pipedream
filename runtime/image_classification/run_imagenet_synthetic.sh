@@ -1,0 +1,1 @@
+python3 main_with_runtime.py --module models.vgg16.gpus=1 -b 64 --synthetic_data --rank 0 --local_rank 0 --master_addr localhost --config_path models/vgg16/gpus=1/hybrid_conf.json --distributed_backend gloo
