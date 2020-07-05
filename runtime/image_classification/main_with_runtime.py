@@ -265,7 +265,7 @@ def main():
         if args.synthetic_data:
             train_dataset = SyntheticDataset((3, 224, 224), 1000)
 
-    
+    val_dataset = None
     if args.data_dir:
         val_dataset = datasets.ImageFolder(valdir, transforms.Compose([
             transforms.Resize(256),
