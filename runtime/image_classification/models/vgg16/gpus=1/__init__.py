@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
-
 from .vgg16 import VGG16Partitioned
 
 def arch():
@@ -8,7 +5,7 @@ def arch():
 
 def model(criterion):
     return [
-        (VGG16Partitioned(), ["input"], ["output"]),
+        (vgg16.VGG16Partitioned(), ["input0"], ["output"]),
         (criterion, ["output"], ["loss"])
     ]
 

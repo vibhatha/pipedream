@@ -1,9 +1,6 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
-
+from .vgg16 import VGG16Partitioned
 from .stage0 import Stage0
 from .stage1 import Stage1
-from .vgg16 import VGG16Partitioned
 
 def arch():
     return "vgg16"
